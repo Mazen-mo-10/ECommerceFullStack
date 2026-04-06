@@ -88,7 +88,7 @@ export const Header = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <h1 className="text-2xl font-bold text-foreground">
-              <span className="text-primary">E</span>Shop
+              <span className="text-primary">Shop-</span>E
             </h1>
           </Link>
 
