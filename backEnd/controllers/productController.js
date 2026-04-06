@@ -5,28 +5,19 @@ const Product = require("../models/Product");
 // @access  Public
 const getProducts = async (req, res) => {
   try {
-    const { category, sort, minPrice, maxPrice, search } = req.query;
+    const { category, sort, minPrice, maxPrice, search, page, limit } =
+      req.query;
 
     let filter = {};
 
-    // Filter by category
-    if (category && category !== "All Products") {
-      filter.category = category;
-    }
-
-    // Filter by price range
+    if (category && category !== "All Products") filter.category = category;
     if (minPrice || maxPrice) {
       filter.price = {};
       if (minPrice) filter.price.$gte = Number(minPrice);
       if (maxPrice) filter.price.$lte = Number(maxPrice);
     }
+    if (search) filter.name = { $regex: search, $options: "i" };
 
-    // Filter by search
-    if (search) {
-      filter.name = { $regex: search, $options: "i" };
-    }
-
-    // Sort options
     let sortOption = {};
     if (sort === "price-asc") sortOption = { price: 1 };
     else if (sort === "price-desc") sortOption = { price: -1 };
@@ -34,11 +25,22 @@ const getProducts = async (req, res) => {
     else if (sort === "newest") sortOption = { createdAt: -1 };
     else sortOption = { isFeatured: -1 };
 
-    const products = await Product.find(filter).sort(sortOption);
+    const pageNum = Number(page) || 1;
+    const limitNum = Number(limit) || 9;
+    const skip = (pageNum - 1) * limitNum;
+
+    const total = await Product.countDocuments(filter);
+    const products = await Product.find(filter)
+      .sort(sortOption)
+      .skip(skip)
+      .limit(limitNum);
 
     res.status(200).json({
       success: true,
       count: products.length,
+      total,
+      pages: Math.ceil(total / limitNum),
+      page: pageNum,
       products,
     });
   } catch (error) {

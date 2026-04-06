@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
+const rateLimit = require("express-rate-limit");
 require("dotenv").config();
 
 const connectDB = require("./config/db");
@@ -10,25 +11,40 @@ const productRoutes = require("./routes/productRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const userRoutes = require("./routes/userRoutes");
 const passport = require("./config/passport");
+const cartRoutes = require("./routes/cartRoutes");
 
 const app = express();
 
-// Middleware
+// Security Middleware
 app.use(helmet());
 app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
+app.use(passport.initialize());
+
+// Rate Limiting
+const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100 });
+const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 10 });
+app.use("/api/", limiter);
+app.use("/api/auth/login", authLimiter);
+app.use("/api/auth/register", authLimiter);
 
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/users", userRoutes);
-app.use(passport.initialize());
+app.use("/api/cart", cartRoutes);
 
 // Connect DB and start server
 connectDB().then(() => {
   app.listen(process.env.PORT, () => {
     console.log(`Server running on port ${process.env.PORT}`);
   });
+});
+
+// Global Error Handler
+app.use((err, req, res, next) => {
+  const status = err.statusCode || 500;
+  res.status(status).json({ message: err.message || "Server Error" });
 });

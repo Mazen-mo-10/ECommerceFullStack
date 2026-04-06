@@ -6,7 +6,11 @@ import { categories } from "@/data/products";
 import { Product } from "@/types/product";
 import api from "@/lib/api";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
@@ -19,6 +23,12 @@ export default function Shop() {
   const [sortBy, setSortBy] = useState<string>("featured");
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalProducts, setTotalProducts] = useState(0);
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory, searchQuery, sortBy, priceRange]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -33,8 +43,12 @@ export default function Shop() {
         params.minPrice = String(priceRange[0]);
         params.maxPrice = String(priceRange[1]);
 
-        const { data } = await api.get("/api/products", { params });
+        const { data } = await api.get("/api/products", {
+          params: { ...params, page: currentPage, limit: 9 },
+        });
         setProducts(data.products);
+        setTotalPages(data.pages);
+        setTotalProducts(data.total);
       } catch (error) {
         console.error(error);
       } finally {
@@ -42,7 +56,7 @@ export default function Shop() {
       }
     };
     fetchProducts();
-  }, [selectedCategory, searchQuery, sortBy, priceRange]);
+  }, [selectedCategory, searchQuery, sortBy, priceRange, currentPage]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -73,7 +87,9 @@ export default function Shop() {
                   {categories.map((category) => (
                     <Button
                       key={category.id}
-                      variant={selectedCategory === category.name ? "default" : "ghost"}
+                      variant={
+                        selectedCategory === category.name ? "default" : "ghost"
+                      }
                       className="w-full justify-start"
                       onClick={() => setSelectedCategory(category.name)}
                     >
@@ -87,7 +103,9 @@ export default function Shop() {
                 <h3 className="font-semibold mb-4">Price Range</h3>
                 <div className="space-y-4">
                   <Slider
-                    min={0} max={3000} step={50}
+                    min={0}
+                    max={3000}
+                    step={50}
                     value={priceRange}
                     onValueChange={setPriceRange}
                     className="w-full"
@@ -104,7 +122,9 @@ export default function Shop() {
           {/* Products Grid */}
           <div className="lg:col-span-3">
             <div className="flex items-center justify-between mb-6">
-              <p className="text-sm text-muted-foreground">{products.length} Products</p>
+              <p className="text-sm text-muted-foreground">
+                {products.length} Products
+              </p>
               <Select value={sortBy} onValueChange={setSortBy}>
                 <SelectTrigger className="w-48">
                   <SelectValue placeholder="Sort by" />
@@ -123,7 +143,9 @@ export default function Shop() {
             ) : products.length === 0 ? (
               <div className="text-center py-16 space-y-6">
                 <p className="text-xl text-muted-foreground">
-                  {searchQuery ? `No results found for "${searchQuery}"` : "No products found"}
+                  {searchQuery
+                    ? `No results found for "${searchQuery}"`
+                    : "No products found"}
                 </p>
                 <div className="flex flex-wrap gap-3 justify-center">
                   {categories.slice(0, 3).map((cat) => (
@@ -138,6 +160,44 @@ export default function Shop() {
                 {products.map((product) => (
                   <ProductCard key={product._id} product={product} />
                 ))}
+              </div>
+            )}
+            {/*Pagination */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-2 mt-8">
+                <button
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 rounded-lg border hover:border-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  Previous
+                </button>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (page) => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`w-10 h-10 rounded-lg border transition-colors ${
+                        currentPage === page
+                          ? "bg-primary text-primary-foreground border-primary"
+                          : "hover:border-primary"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ),
+                )}
+
+                <button
+                  onClick={() =>
+                    setCurrentPage((p) => Math.min(totalPages, p + 1))
+                  }
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 rounded-lg border hover:border-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  Next
+                </button>
               </div>
             )}
           </div>

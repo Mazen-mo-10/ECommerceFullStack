@@ -2,7 +2,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { User, ShoppingBag, Heart, LogOut, Settings } from "lucide-react";
+import { User, ShoppingBag, Heart, LogOut, Settings, Package } from "lucide-react";
 
 export default function Profile() {
   const { user, logout, loading } = useAuth();
@@ -22,6 +22,7 @@ export default function Profile() {
   const quickLinks = [
     { label: "My Wishlist", icon: Heart, path: "/wishlist" },
     { label: "Shop Now", icon: ShoppingBag, path: "/shop" },
+    { label: "My Orders", icon: Package, path: "/orders" },
     ...(user.role === "admin"
       ? [{ label: "Admin Dashboard", icon: Settings, path: "/admin" }]
       : []),
