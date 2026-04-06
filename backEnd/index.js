@@ -37,10 +37,10 @@ app.use("/api/users", userRoutes);
 app.use("/api/cart", cartRoutes);
 
 // Connect DB and start server
-const PORT_NUM = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000;
 connectDB().then(() => {
-  app.listen(PORT_NUM, () => {
-    console.log(`Server running on port ${PORT_NUM}`);
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
   });
 });
 
