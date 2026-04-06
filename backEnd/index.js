@@ -18,7 +18,12 @@ const app = express();
 app.set("trust proxy", 1);
 // Security Middleware
 app.use(helmet());
-app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
+app.use(
+  cors({
+    origin: "https://e-commerce-fullstack-mazen-mohamed.vercel.app",
+    credentials: true,
+  }),
+);
 app.use(express.json());
 app.use(cookieParser());
 app.use(passport.initialize());
