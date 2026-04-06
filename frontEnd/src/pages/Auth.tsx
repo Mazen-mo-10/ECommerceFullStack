@@ -30,6 +30,7 @@ export default function Auth() {
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const API_URL = import.meta.env.VITE_API_URL;
   const [formData, setFormData] = useState({
     name: "",
     email: localStorage.getItem("rememberedEmail") || "",
@@ -242,7 +243,7 @@ export default function Auth() {
           <button
             type="button"
             onClick={() =>
-              (window.location.href = "http://localhost:5000/api/auth/google")
+              (window.location.href = `${API_URL}/api/auth/google`)
             }
             className="w-full flex items-center justify-center gap-3 rounded-md border bg-background px-4 py-2.5 text-sm font-medium hover:bg-secondary transition-colors"
           >
