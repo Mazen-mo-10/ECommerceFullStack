@@ -17,6 +17,9 @@ const createOrder = async (req, res) => {
       orderItems.map(async (item) => {
         const product = await Product.findById(item.product);
         if (!product) throw new Error(`Product ${item.product} not found`);
+        if (!item.quantity || item.quantity < 1 || item.quantity > 100) {
+          throw new Error("Invalid quantity");
+        }
         if (product.stock < item.quantity) {
           throw new Error(`${product.name} is out of stock`);
         }

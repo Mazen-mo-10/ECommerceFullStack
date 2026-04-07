@@ -85,7 +85,33 @@ const getFeaturedProducts = async (req, res) => {
 // @access  Private/Admin
 const createProduct = async (req, res) => {
   try {
-    const product = await Product.create(req.body);
+    const { name, description, price, category, image, stock } = req.body;
+    if (
+      !name ||
+      !description ||
+      !price ||
+      !category ||
+      !image ||
+      stock === undefined
+    ) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+    if (price < 0 || stock < 0) {
+      return res
+        .status(400)
+        .json({ message: "Price and stock must be positive" });
+    }
+    const product = await Product.create({
+      name,
+      description,
+      price,
+      category,
+      image,
+      stock,
+      originalPrice: req.body.originalPrice,
+      isNew: req.body.isNew,
+      isFeatured: req.body.isFeatured,
+    });
     res.status(201).json({ success: true, product });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -97,21 +123,38 @@ const createProduct = async (req, res) => {
 // @access  Private/Admin
 const updateProduct = async (req, res) => {
   try {
-    const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
-
-    if (!product) {
-      return res.status(404).json({ message: "Product not found" });
-    }
-
+    const {
+      name,
+      description,
+      price,
+      originalPrice,
+      category,
+      image,
+      stock,
+      isNew,
+      isFeatured,
+    } = req.body;
+    const product = await Product.findByIdAndUpdate(
+      req.params.id,
+      {
+        name,
+        description,
+        price,
+        originalPrice,
+        category,
+        image,
+        stock,
+        isNew,
+        isFeatured,
+      },
+      { new: true, runValidators: true },
+    );
+    if (!product) return res.status(404).json({ message: "Product not found" });
     res.status(200).json({ success: true, product });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
-
 // @desc    Delete product
 // @route   DELETE /api/products/:id
 // @access  Private/Admin
