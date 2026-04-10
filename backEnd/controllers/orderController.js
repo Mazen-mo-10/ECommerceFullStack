@@ -63,7 +63,8 @@ const createOrder = async (req, res) => {
 
     res.status(201).json({ success: true, order });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
@@ -77,7 +78,8 @@ const getMyOrders = async (req, res) => {
     });
     res.status(200).json({ success: true, orders });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
@@ -105,7 +107,8 @@ const getOrderById = async (req, res) => {
 
     res.status(200).json({ success: true, order });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
@@ -129,7 +132,8 @@ const getAllOrders = async (req, res) => {
       orders,
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
@@ -158,7 +162,8 @@ const updateOrderStatus = async (req, res) => {
 
     res.status(200).json({ success: true, order });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 

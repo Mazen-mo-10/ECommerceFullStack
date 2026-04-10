@@ -13,7 +13,8 @@ const getProfile = async (req, res) => {
 
     res.status(200).json({ success: true, user });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
@@ -31,7 +32,7 @@ const updateProfile = async (req, res) => {
     }
 
     if (name) user.name = name;
-    if (email) user.email = email;
+    //if (email) user.email = email;
 
     await user.save();
 
@@ -45,7 +46,8 @@ const updateProfile = async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
@@ -73,7 +75,8 @@ const changePassword = async (req, res) => {
 
     res.status(200).json({ success: true, message: "Password updated" });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
@@ -111,7 +114,8 @@ const toggleWishlist = async (req, res) => {
       wishlist: user.wishlist,
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
@@ -123,7 +127,8 @@ const getAllUsers = async (req, res) => {
     const users = await User.find().select("-password").sort({ createdAt: -1 });
     res.status(200).json({ success: true, count: users.length, users });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
@@ -146,7 +151,8 @@ const deleteUser = async (req, res) => {
 
     res.status(200).json({ success: true, message: "User deleted" });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
@@ -173,7 +179,8 @@ const getAdminStats = async (req, res) => {
       recentOrders,
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
@@ -191,7 +198,8 @@ const toggleUserRole = async (req, res) => {
     await user.save();
     res.status(200).json({ success: true, user });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 

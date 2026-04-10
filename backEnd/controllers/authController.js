@@ -49,7 +49,8 @@ const register = async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
@@ -86,7 +87,8 @@ const login = async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
@@ -111,12 +113,10 @@ const forgotPassword = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res
-        .status(200)
-        .json({
-          success: true,
-          message: "If this email exists, a reset link has been sent",
-        });
+      return res.status(200).json({
+        success: true,
+        message: "If this email exists, a reset link has been sent",
+      });
     }
 
     // Generate reset token
@@ -151,7 +151,8 @@ const forgotPassword = async (req, res) => {
 
     res.status(200).json({ success: true, message: "Email sent" });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
@@ -183,7 +184,8 @@ const resetPassword = async (req, res) => {
       .status(200)
       .json({ success: true, message: "Password reset successful" });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 

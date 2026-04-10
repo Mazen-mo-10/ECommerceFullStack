@@ -1,6 +1,5 @@
 const express = require("express");
 const cors = require("cors");
-const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 const rateLimit = require("express-rate-limit");
 require("dotenv").config();
@@ -12,24 +11,30 @@ const orderRoutes = require("./routes/orderRoutes");
 const userRoutes = require("./routes/userRoutes");
 const passport = require("./config/passport");
 const cartRoutes = require("./routes/cartRoutes");
+const { helmet, mongoSanitize, limiter } = require("./middleware/security");
 
 const app = express();
 
-app.set("trust proxy", 1);
 // Security Middleware
 app.use(helmet());
+app.use(mongoSanitize());
+app.use("/api", limiter);
+
+app.set("trust proxy", 1);
+// CORS Middleware
 app.use(
   cors({
     origin: "https://e-commerce-fullstack-mazen-mohamed.vercel.app",
     credentials: true,
   }),
 );
+
+// Parsers
 app.use(express.json());
 app.use(cookieParser());
 app.use(passport.initialize());
 
 // Rate Limiting
-const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100 });
 const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 10 });
 app.use("/api/", limiter);
 app.use("/api/auth/login", authLimiter);

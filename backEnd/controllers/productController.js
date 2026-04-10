@@ -44,7 +44,8 @@ const getProducts = async (req, res) => {
       products,
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
@@ -64,7 +65,8 @@ const getProductById = async (req, res) => {
 
     res.status(200).json({ success: true, product });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
@@ -76,7 +78,8 @@ const getFeaturedProducts = async (req, res) => {
     const products = await Product.find({ isFeatured: true }).limit(8);
     res.status(200).json({ success: true, products });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
@@ -114,7 +117,8 @@ const createProduct = async (req, res) => {
     });
     res.status(201).json({ success: true, product });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
@@ -152,7 +156,8 @@ const updateProduct = async (req, res) => {
     if (!product) return res.status(404).json({ message: "Product not found" });
     res.status(200).json({ success: true, product });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 // @desc    Delete product
@@ -168,7 +173,8 @@ const deleteProduct = async (req, res) => {
 
     res.status(200).json({ success: true, message: "Product deleted" });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
@@ -213,7 +219,8 @@ const createReview = async (req, res) => {
 
     res.status(201).json({ success: true, message: "Review added" });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 

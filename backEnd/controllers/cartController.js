@@ -12,7 +12,8 @@ const getCart = async (req, res) => {
     );
     res.status(200).json({ success: true, cart: user.cart });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
@@ -31,7 +32,8 @@ const saveCart = async (req, res) => {
     await User.findByIdAndUpdate(req.user._id, { cart: cartItems });
     res.status(200).json({ success: true });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
@@ -43,7 +45,8 @@ const clearCart = async (req, res) => {
     await User.findByIdAndUpdate(req.user._id, { cart: [] });
     res.status(200).json({ success: true });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
